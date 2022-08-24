@@ -23,4 +23,13 @@
         </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="TestData\input.csv">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestData\output.csv">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
