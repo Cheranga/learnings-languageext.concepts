@@ -2,8 +2,6 @@
 
 public delegate Either<Error, A> IO<A>();
 
-public delegate int GetCount<A>(A a);
-
 public static class IOExtensions
 {
     public static IO<A> Pure<A>(A value) => () => value;

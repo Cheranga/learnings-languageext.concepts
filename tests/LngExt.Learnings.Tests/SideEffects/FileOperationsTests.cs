@@ -3,24 +3,84 @@
 public class FileOperationsTests
 {
     [Fact]
-    public void FileDoesNotExist()
+    public void ReadFromUnExistingFile()
     {
-        Assert.Throws<FileNotFoundException>(() => FileOperations.ReadAllText("blah.json")());
+        var operation = (
+            from content in FileOperations.ReadAllText("blah.json")
+            select content
+        ).Run();
+        operation.IsLeft.Should().BeTrue();
+        operation.IfLeft(error => error.ToException().Should().BeOfType<FileNotFoundException>());
+    }
 
+    [Fact]
+    public void ReadFromExistingFile()
+    {
+        var operation = (
+            from content in FileOperations.ReadAllText("TestData/input.csv")
+            select content
+        ).Run();
+        operation.IsRight.Should().BeTrue();
+        operation.IfRight(s => s.Should().NotBeNullOrEmpty());
+    }
 
-        // operation.IsLeft.Should().BeTrue();
-        // operation.IfLeft(error =>
-        // {
-        //     error.Should().NotBeNull("error must not be null");
-        //     error.Code.Should().Be(500, "error code must be 500");
-        //     error.Exception.IsSome.Should().BeTrue("there must be an exception");
-        //     error.Exception.IfSome(
-        //         e =>
-        //             e.Should()
-        //                 .BeOfType<FileNotFoundException>(
-        //                     $"exception must be of type {nameof(FileNotFoundException)}"
-        //                 )
-        //     );
-        // });
+    [Fact]
+    public void WriteToFile()
+    {
+        var operation = (
+            from _ in FileOperations.WriteAllText("TestData/output.csv", "some content")
+            select _
+        ).Run();
+        operation.IsRight.Should().BeTrue();
+    }
+
+    [Fact]
+    public void CombineReadAndWriteWithExistingFiles()
+    {
+        var input = "TestData/input.csv";
+        var output = "TestData/randomoutput.csv";
+
+        var operation = (
+            from a in FileOperations.ReadAllText(input)
+            from _ in FileOperations.WriteAllText(output, a)
+            select unit
+        ).Run();
+
+        operation.IsRight.Should().BeTrue();
+    }
+
+    [Fact]
+    public void CombineReadAndWriteWithUnExistingFiles()
+    {
+        var input = "TestData/blah.csv";
+        var output = "TestData/output.csv";
+
+        var operation = (
+            from a in FileOperations.ReadAllText(input)
+            from _ in FileOperations.WriteAllText(output, a)
+            select unit
+        ).Run();
+
+        operation.IsLeft.Should().BeTrue();
+        operation.IfLeft(error => error.ToException().Should().BeOfType<FileNotFoundException>());
+    }
+
+    [Fact]
+    public void GetCharacterCount()
+    {
+        var input = "TestData/input.csv";
+        var output = "TestData/random.csv";
+
+        var operation = (
+            from i in FileOperations.ReadAllText(input)
+            from _ in FileOperations.WriteAllText(output, i)
+            from o in FileOperations.ReadAllText(output)
+            select o
+        )
+            .Map(s => s.Length)
+            .Run();
+
+        operation.IsRight.Should().BeTrue();
+        operation.IfRight(i => i.Should().BeGreaterThan(1));
     }
 }
