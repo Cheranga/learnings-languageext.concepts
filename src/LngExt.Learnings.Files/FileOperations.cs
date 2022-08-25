@@ -1,6 +1,4 @@
-﻿using LanguageExt;
-
-namespace LngExt.Learnings.Files;
+﻿namespace LngExt.Learnings.Files;
 
 public static class FileOperations
 {

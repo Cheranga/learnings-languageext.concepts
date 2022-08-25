@@ -1,7 +1,4 @@
-﻿using LanguageExt;
-using LanguageExt.Common;
-
-namespace LngExt.Learnings.Files;
+﻿namespace LngExt.Learnings.Files;
 
 public delegate Either<Error, A> IOEnv<Env, A>(Env env);
 
