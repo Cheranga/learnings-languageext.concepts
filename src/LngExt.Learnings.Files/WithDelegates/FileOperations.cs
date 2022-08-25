@@ -1,4 +1,4 @@
-﻿namespace LngExt.Learnings.Files;
+﻿namespace LngExt.Learnings.Files.WithDelegates;
 
 public static class FileOperations
 {

@@ -1,4 +1,4 @@
-﻿using LngExt.Learnings.Files;
+﻿using LngExt.Learnings.Files.WithDelegates;
 
 namespace LngExt.Learnings.Tests.SideEffects.Files;
 
