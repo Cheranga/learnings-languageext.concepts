@@ -1,4 +1,6 @@
-﻿namespace LngExt.Learnings.Tests.SideEffects;
+﻿using LanguageExt;
+
+namespace LngExt.Learnings.Files;
 
 public static class FileOperations
 {

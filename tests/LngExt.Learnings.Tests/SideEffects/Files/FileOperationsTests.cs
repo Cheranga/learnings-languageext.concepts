@@ -1,4 +1,6 @@
-﻿namespace LngExt.Learnings.Tests.SideEffects;
+﻿using LngExt.Learnings.Files;
+
+namespace LngExt.Learnings.Tests.SideEffects.Files;
 
 public class FileOperationsTests
 {

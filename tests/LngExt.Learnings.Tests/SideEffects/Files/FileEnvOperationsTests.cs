@@ -1,6 +1,6 @@
-﻿using System.Diagnostics;
+﻿using LngExt.Learnings.Files;
 
-namespace LngExt.Learnings.Tests.SideEffects;
+namespace LngExt.Learnings.Tests.SideEffects.Files;
 
 public class TestFileEnvironment : IFileWorld
 {
