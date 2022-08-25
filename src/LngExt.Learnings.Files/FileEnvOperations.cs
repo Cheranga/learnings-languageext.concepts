@@ -3,12 +3,6 @@ using LanguageExt.Common;
 
 namespace LngExt.Learnings.Files;
 
-public interface IFileWorld
-{
-    string ReadContent(string filePath);
-    Either<Error, Unit> WriteContent(string filePath, string content);
-}
-
 public static class FileEnvOperations
 {
     public static IOEnv<Env, string> ReadFileContent<Env>(string filePath) where Env : IFileWorld =>

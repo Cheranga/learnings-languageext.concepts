@@ -43,7 +43,7 @@ public class FileEnvOperationsTests
     public void WriteToFile()
     {
         var operation = (
-            from _ in FileEnvOperations.WriteToFile<IFileWorld>("TestData/output.csv", "some content")
+            from _ in FileEnvOperations.WriteToFile<IFileWorld>("TestData/randomenvoutput.csv", "some content")
             select _
         ).Run(new TestFileEnvironment());
         operation.IsRight.Should().BeTrue();

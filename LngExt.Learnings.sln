@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LngExt.Learnings.Tests", "t
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LngExt.Learnings.Files", "src\LngExt.Learnings.Files\LngExt.Learnings.Files.csproj", "{13D909A7-E0F6-446B-8CA2-E8A2DB6B7A32}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LngExt.Learning.Azure.Queues", "src\LngExt.Learning.Azure.Queues\LngExt.Learning.Azure.Queues.csproj", "{A6CE1653-0E57-4805-9841-91706D9F8EB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{13D909A7-E0F6-446B-8CA2-E8A2DB6B7A32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13D909A7-E0F6-446B-8CA2-E8A2DB6B7A32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13D909A7-E0F6-446B-8CA2-E8A2DB6B7A32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6CE1653-0E57-4805-9841-91706D9F8EB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6CE1653-0E57-4805-9841-91706D9F8EB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6CE1653-0E57-4805-9841-91706D9F8EB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6CE1653-0E57-4805-9841-91706D9F8EB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
