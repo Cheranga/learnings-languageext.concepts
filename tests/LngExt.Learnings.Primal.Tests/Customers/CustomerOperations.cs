@@ -9,13 +9,15 @@ public static class CustomerOperations
         string customerId,
         bool ignoreCase = true
     ) =>
-        from customer in customers.Find(
-            x =>
-                string.Equals(
-                    x.Id,
-                    customerId,
-                    ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal
-                )
-        )
+        from customer in customers
+            .Find(
+                x =>
+                    string.Equals(
+                        x.Id,
+                        customerId,
+                        ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal
+                    )
+            )
+            .MapFail(error => Error.New("CustomerNotFound", "customer cannot be found", error.Exception))
         select customer;
 }

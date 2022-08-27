@@ -32,7 +32,11 @@ public static class CustomerOperationsTests
         var customer = CustomerOperations.GetCustomerById(customers, "20");
 
         customer.IsNone().Should().BeTrue();
-        customer.IfNone(c => c.Should().BeNull());
+        customer.IfNone(err =>
+        {
+            err.ErrorCode.Should().Be("CustomerNotFound");
+            err.ErrorMessage.Should().Be("customer cannot be found");
+        });
     }
 
     [Fact]
