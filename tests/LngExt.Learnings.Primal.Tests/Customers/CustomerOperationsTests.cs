@@ -6,12 +6,14 @@ namespace LngExt.Learnings.Primal.Tests.Customers;
 public static class CustomerOperationsTests
 {
     [Fact]
-    public static void FindExistingCustomerMustPass()
+    public static async Task FindExistingCustomerMustPass()
     {
         var customers = Enumerable
             .Range(1, 10)
             .Select(x => new Customer { Id = x.ToString(), Name = $"customer-{x}" });
-        var customer = CustomerOperations.GetCustomerById(customers, "5");
+
+        var runTime = new TestCustomerDataStoreRunTime(customers.ToList());
+        var customer = await CustomerOperations.GetCustomerById(runTime, "5");
 
         customer.IsSome().Should().BeTrue();
         customer.IfSome(c =>
@@ -22,13 +24,14 @@ public static class CustomerOperationsTests
     }
 
     [Fact]
-    public static void FindUnExistingCustomerMustFail()
+    public static async Task FindUnExistingCustomerMustFail()
     {
         var customers = Enumerable
             .Range(1, 10)
             .Select(x => new Customer { Id = x.ToString(), Name = $"customer-{x}" });
 
-        var customer = CustomerOperations.GetCustomerById(customers, "20");
+        var runTime = new TestCustomerDataStoreRunTime(customers.ToList());
+        var customer = await CustomerOperations.GetCustomerById(runTime, "20");
 
         customer.IsNone().Should().BeTrue();
         customer.IfNone(err =>
@@ -39,16 +42,19 @@ public static class CustomerOperationsTests
     }
 
     [Fact]
-    public static void FindingCustomerInEmptyCollectionMustFail()
+    public static async Task FindingCustomerInEmptyCollectionMustFail()
     {
-        var customer = CustomerOperations.GetCustomerById(new List<Customer>(), "1");
+        var runTime = new TestCustomerDataStoreRunTime(new List<Customer>());
+
+        var customer = await CustomerOperations.GetCustomerById(runTime, "1");
         customer.IsNone().Should().BeTrue();
     }
 
     [Fact]
-    public static void FindingCustomerInNullCollectionMustFail()
+    public static async Task FindingCustomerInNullCollectionMustFail()
     {
-        var customer = CustomerOperations.GetCustomerById(null, "1");
+        var runTime = new TestCustomerDataStoreRunTime(null);
+        var customer = await CustomerOperations.GetCustomerById(runTime , "1");
         customer.IsNone().Should().BeTrue();
     }
 
@@ -129,13 +135,40 @@ public static class CustomerOperationsTests
             .Range(1, 10)
             .Select(x => new Customer { Id = x.ToString(), Name = $"customer-{x}" });
         
-        var filteredCustomers = (from oldestCustomer in customers.Find(x=>x.Id == "1")
-            from latestCustomer in customers.Find(x=>x.Id == "10")
+        var filteredCustomers = (from oldestCustomer in customers.FindInCollection(x=>x.Id == "1")
+            from latestCustomer in customers.FindInCollection(x=>x.Id == "10")
             select (oldestCustomer, latestCustomer))
             .IfSome(data =>
             {
                 data.oldestCustomer.Should().NotBeNull();
                 data.latestCustomer.Should().NotBeNull();
             });
+    }
+
+    [Fact]
+    public static async Task RegisterNonNullCustomerMustPass()
+    {
+        var customers = Enumerable
+            .Range(1, 10)
+            .Select(x => new Customer { Id = x.ToString(), Name = $"customer-{x}" });
+
+        var runTime = new TestCustomerDataStoreRunTime(customers.ToList());
+        var op = await CustomerOperations.RegisterCustomerAsync(runTime, new Customer {Id = "666", Name = "Cheranga"});
+
+        op.IsSome().Should().BeTrue();
+    }
+    
+    [Fact]
+    public static async Task RegisterNullCustomerMustPass()
+    {
+        var customers = Enumerable
+            .Range(1, 10)
+            .Select(x => new Customer { Id = x.ToString(), Name = $"customer-{x}" });
+
+        var runTime = new TestCustomerDataStoreRunTime(customers.ToList());
+        var op = await CustomerOperations.RegisterCustomerAsync(runTime, null);
+
+        op.IsNone().Should().BeTrue();
+        op.IfNone(error => error.ErrorCode.Should().Be("InvalidCustomer"));
     }
 }

@@ -5,15 +5,13 @@ namespace LngExt.Learnings.Primal.Tests.Customers;
 
 public static class CustomerOperations
 {
-    public static Box<Customer> GetCustomerById(
-        IEnumerable<Customer> customers,
+    public static async Task<Box<Customer>> GetCustomerById(
+        ICustomerDataStoreRunTime runTime,
         string customerId
     ) =>
-        from customer in customers
-            .Find(x => x.Id.CompareWithoutCase(customerId))
-            .MapFail(
-                error => Error.New("CustomerNotFound", "customer cannot be found", error.Exception)
-            )
+        from customer in (
+            await runTime.GetCustomerAsync(customer => customer.Id.CompareWithoutCase(customerId))
+        ).MapFail("CustomerNotFound", "customer cannot be found")
         select customer;
 
     public static Box<Customer> GetCustomerFromService(
@@ -21,9 +19,7 @@ public static class CustomerOperations
         string customerId
     ) =>
         from customer in Try(() => customers.First(x => x.Id.CompareWithoutCase(customerId)))
-            .MapFail(
-                error => Error.New("CustomerNotFound", "customer cannot be found", error.Exception)
-            )
+            .MapFail("CustomerNotFound", "customer cannot be found")
         select customer;
 
     public static async Task<Box<Customer>> GetCustomerFromServiceAsync(
@@ -34,8 +30,20 @@ public static class CustomerOperations
             await TryAsync(
                 () => Task.FromResult(customers.First(x => x.Id.CompareWithoutCase(customerId)))
             )
-        ).MapFail(
-            error => Error.New("CustomerNotFound", "customer cannot be found", error.Exception)
-        )
+        ).MapFail("CustomerNotFound", "customer cannot be found")
         select customer;
+
+    public static async Task<Box<Unit>> RegisterCustomerAsync(
+        ICustomerDataStoreRunTime runTime,
+        Customer customer
+    ) =>
+        customer.ToPure().IsNone()
+            ? Box<Unit>.ToNone("InvalidCustomer", "invalid customer details")
+            : (
+                from op in (await runTime.RegisterCustomerAsync(customer)).MapFail(
+                    "CustomerRegistrationError",
+                    "error occurred when registering the customer"
+                )
+                select op
+            ).BiMap(unit => unit, Box<Unit>.ToNone);
 }
