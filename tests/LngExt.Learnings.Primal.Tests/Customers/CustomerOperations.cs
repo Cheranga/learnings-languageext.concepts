@@ -1,5 +1,4 @@
 ﻿using LngExt.Learnings.Primal.Tests.Core;
-using static LngExt.Learnings.Primal.Tests.Core.TryCatchBoxExtensions;
 
 namespace LngExt.Learnings.Primal.Tests.Customers;
 
@@ -14,22 +13,20 @@ public static class CustomerOperations
         ).MapFail("CustomerNotFound", "customer cannot be found")
         select customer;
 
-    public static Box<Customer> GetCustomerFromService(
-        IEnumerable<Customer> customers,
-        string customerId
-    ) =>
-        from customer in Try(() => customers.First(x => x.Id.CompareWithoutCase(customerId)))
-            .MapFail("CustomerNotFound", "customer cannot be found")
-        select customer;
+    // public static Box<Customer> GetCustomerFromService(
+    //     ICustomerDataStoreRunTime runTime,
+    //     string customerId
+    // ) =>
+    //     from customer in Try(() => customers.First(x => x.Id.CompareWithoutCase(customerId)))
+    //         .MapFail("CustomerNotFound", "customer cannot be found")
+    //     select customer;
 
     public static async Task<Box<Customer>> GetCustomerFromServiceAsync(
-        IEnumerable<Customer> customers,
+        ICustomerDataStoreRunTime runTime,
         string customerId
     ) =>
         from customer in (
-            await TryAsync(
-                () => Task.FromResult(customers.First(x => x.Id.CompareWithoutCase(customerId)))
-            )
+            await runTime.GetCustomerAsync(c => c.Id.CompareWithoutCase(customerId))
         ).MapFail("CustomerNotFound", "customer cannot be found")
         select customer;
 

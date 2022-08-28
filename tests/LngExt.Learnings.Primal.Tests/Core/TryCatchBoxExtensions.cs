@@ -20,7 +20,6 @@ public static class TryCatchBoxExtensions
         try
         {
             return (await operation()).ToPure();
-            // return a == null ? Box<T>.ToNone() : Box<T>.ToSome(a);
         }
         catch (Exception exception)
         {
