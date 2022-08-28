@@ -24,7 +24,9 @@ public class Error
     private Error() { }
 
     public static Error New(string errorCode, string errorMessage) =>
-        new() { ErrorCode = errorCode, ErrorMessage = errorMessage };
+        New(errorCode, errorMessage, null);
+
+    public static Error New(Exception exception) => New(null, null, exception);
 
     public static Error New(string errorCode, string errorMessage, Exception exception) =>
         new()
