@@ -1,14 +1,15 @@
 ﻿namespace LngExt.Learnings.Primal.Tests.Core;
 
-public class Box<T>
+public record class Box<T>
 {
     private Box(T data) => Data = data;
     private Box(Error error) => Error = error;
-    private Box() => new Box<T>(Error.New("404", "null data"));
+    private Box() => Error = Error.New("404", "null data");
 
     public static Box<T> ToSome(T data) => data == null ? ToNone() : new Box<T>(data);
     public static Box<T> ToNone() => new();
     public static Box<T> ToNone(Error error) => new(error);
+    public static Box<T> ToNone(string errorCode, string errorMessage) => ToNone(Error.New(errorCode, errorMessage));
 
     public readonly T Data;
 
