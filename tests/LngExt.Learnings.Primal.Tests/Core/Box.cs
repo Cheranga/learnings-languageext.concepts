@@ -2,40 +2,34 @@
 
 public record class Box<T>
 {
-    private Box() { }
+    private Box(T data) => Data = data;
+    private Box(Error error) => Error = error;
+    private Box() => Error = Error.New("404", "null data");
 
-    public static Box<T> ToSome(T data) => data == null ? ToNone() : new Box<T> { Data = data };
+    public static Box<T> ToSome(T data) => data == null ? ToNone() : new Box<T>(data);
+    public static Box<T> ToNone() => new();
+    public static Box<T> ToNone(Error error) => new(error);
+    public static Box<T> ToNone(string errorCode, string errorMessage) => ToNone(Error.New(errorCode, errorMessage));
 
-    public static Box<T> ToNone() => ToNone(Error.New("404", "null data"));
+    public readonly T Data;
 
-    public static Box<T> ToNone(Error error) => new() { Error = error };
-
-    public static Box<T> ToNone(string errorCode, string errorMessage) =>
-        ToNone(Error.New(errorCode, errorMessage));
-
-    public T Data { get; private init; }
-
-    public Error Error { get; init; }
+    public readonly Error Error;
 }
 
 public class Error
 {
-    public string ErrorCode { get; private init; } = string.Empty;
-    public string ErrorMessage { get; private init; } = string.Empty;
-    public Exception Exception { get; private init; }
+    public readonly string ErrorCode;
+    public readonly string ErrorMessage;
+    public readonly Exception Exception;
 
-    private Error() { }
+    private Error(string errorCode, string errorMessage, Exception exception)
+    {
+        ErrorCode = errorCode;
+        ErrorMessage = errorMessage;
+        Exception = exception;
+    }
 
-    public static Error New(string errorCode, string errorMessage) =>
-        New(errorCode, errorMessage, null);
+    public static Error New(string errorCode, string errorMessage) => New(errorCode, errorMessage, new Exception(errorMessage));
 
-    public static Error New(Exception exception) => New(null, null, exception);
-
-    public static Error New(string errorCode, string errorMessage, Exception exception) =>
-        new()
-        {
-            ErrorCode = errorCode,
-            ErrorMessage = errorMessage,
-            Exception = exception
-        };
+    public static Error New(string errorCode, string errorMessage, Exception exception) => new Error(errorCode, errorMessage, exception);
 }

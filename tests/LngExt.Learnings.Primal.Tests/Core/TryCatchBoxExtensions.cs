@@ -11,7 +11,9 @@ public static class TryCatchBoxExtensions
         }
         catch (Exception exception)
         {
-            return Box<T>.ToNone(Error.New(exception));
+            return Box<T>.ToNone(
+                Error.New("TryCatchError", "error occurred in try-catch", exception)
+            );
         }
     }
 
@@ -23,7 +25,9 @@ public static class TryCatchBoxExtensions
         }
         catch (Exception exception)
         {
-            return Box<T>.ToNone(Error.New(exception));
+            return Box<T>.ToNone(
+                Error.New("TryCatchError", "error occurred in try-catch", exception)
+            );
         }
     }
 }

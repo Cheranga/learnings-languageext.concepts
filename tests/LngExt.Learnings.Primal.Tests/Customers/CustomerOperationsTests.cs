@@ -170,7 +170,7 @@ public static class CustomerOperationsTests
     }
 
     [Fact]
-    public static async Task RegisterNullCustomerMustPass()
+    public static async Task RegisterNullCustomerMustFail()
     {
         var customers = Enumerable
             .Range(1, 10)
