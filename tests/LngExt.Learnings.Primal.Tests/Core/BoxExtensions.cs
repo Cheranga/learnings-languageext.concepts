@@ -21,7 +21,9 @@ public static class BoxExtensions
         @this.IsNone() ? ExecuteAction(@this.Error, action) : default;
 
     public static Box<A> MapFail<A>(this Box<A> @this, string errorCode, string errorMessage) =>
-        @this.IsSome() ? @this : Box<A>.ToNone(Error.New(errorCode, errorMessage, @this.Error.Exception));
+        @this.IsSome()
+            ? @this
+            : Box<A>.ToNone(Error.New(errorCode, errorMessage, @this.Error.Exception));
 
     public static Box<B> BiMap<A, B>(
         this Box<A> @this,
@@ -35,9 +37,9 @@ public static class BoxExtensions
         Func<A, B, C> projector
     ) =>
         @this.IsNone()
-            ? Box<C>.ToNone()
+            ? Box<C>.ToNone(@this.Error)
             : mapper(@this.Data).IsNone()
-                ? Box<C>.ToNone()
+                ? Box<C>.ToNone(mapper(@this.Data).Error)
                 : projector(@this.Data, mapper(@this.Data).Data).ToPure();
 
     private static Unit ExecuteAction<A>(A data, Action<A> action)
