@@ -1,6 +1,6 @@
 ﻿namespace LngExt.Learnings.Primal.Tests.Core;
 
-public record class Box<T>
+public record Box<T>
 {
     private Box(T data) => Data = data;
     private Box(Error error) => Error = error;
