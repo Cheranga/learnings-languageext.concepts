@@ -182,4 +182,25 @@ public static class CustomerOperationsTests
         op.IsNone().Should().BeTrue();
         op.IfNone(error => error.ErrorCode.Should().Be("InvalidCustomer"));
     }
+    
+    [Fact]
+    public static async Task UpdatingExistingCustomerMustPass()
+    {
+        var customers = Enumerable
+            .Range(1, 10)
+            .Select(x => new Customer { Id = x.ToString(), Name = $"customer-{x}" });
+
+        var runTime = new TestCustomerDataStoreRunTime(customers.ToList());
+        var op = await CustomerOperations.UpdateCustomerAsync(
+            runTime,
+            customer => customer.Id.CompareWithoutCase("5"),
+            customer => customer with {Name = $"updated-customer-{customer.Id}"});
+
+        op.IsSome().Should().BeTrue();
+        op.IfSome(customer =>
+        {
+            customer.Id.Should().Be("5");
+            customer.Name.Should().Be("updated-customer-5");
+        });
+    }
 }

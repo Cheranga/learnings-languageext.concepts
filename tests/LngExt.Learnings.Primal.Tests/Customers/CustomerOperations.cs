@@ -1,4 +1,5 @@
-﻿using LngExt.Learnings.Primal.Tests.Core;
+﻿using System.Linq.Expressions;
+using LngExt.Learnings.Primal.Tests.Core;
 
 namespace LngExt.Learnings.Primal.Tests.Customers;
 
@@ -36,11 +37,20 @@ public static class CustomerOperations
     ) =>
         customer.ToPure().IsNone()
             ? Box<Unit>.ToNone("InvalidCustomer", "invalid customer details")
-            : (
-                from op in (await runTime.RegisterCustomerAsync(customer)).MapFail(
-                    "CustomerRegistrationError",
-                    "error occurred when registering the customer"
-                )
-                select op
-            ).BiMap(unit => unit, Box<Unit>.ToNone);
+            : from op in (await runTime.RegisterCustomerAsync(customer)).MapFail(
+                "CustomerRegistrationError",
+                "error occurred when registering the customer"
+            )
+            select op;
+
+    public static async Task<Box<Customer>> UpdateCustomerAsync(
+        ICustomerDataStoreRunTime runTime,
+        Expression<Func<Customer, bool>> filter,
+        Func<Customer, Customer> updateOperations
+    ) =>
+        from op in (await runTime.UpdateCustomerAsync(filter, updateOperations)).MapFail(
+            "FailedCustomerUpdate",
+            "customer update failed"
+        )
+        select op;
 }

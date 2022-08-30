@@ -21,19 +21,13 @@ public class TestCustomerDataStoreRunTime : ICustomerDataStoreRunTime
         return Task.FromResult(default(Unit).ToPure());
     }
 
-    public async Task<Box<Unit>> UpdateCustomerAsync(
+    public async Task<Box<Customer>> UpdateCustomerAsync(
         Expression<Func<Customer, bool>> filter,
-        Action<Customer> updateOperations
+        Func<Customer, Customer> updateOperations
     ) =>
-        (
-            from customer in await GetCustomerAsync(filter)
-            from op in Try(() =>
-            {
-                updateOperations(customer);
-                return default(Unit);
-            })
-            select op
-        ).BiMap(unit => unit, Box<Unit>.ToNone);
+        from customer in await GetCustomerAsync(filter)
+        from op in Try(() => updateOperations(customer))
+        select op;
 
     public async Task<Box<Customer>> GetCustomerAsync(
         Expression<Func<Customer, bool>> filterExpression

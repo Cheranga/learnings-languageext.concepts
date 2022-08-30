@@ -6,9 +6,9 @@ namespace LngExt.Learnings.Primal.Tests.Customers;
 public interface ICustomerDataStoreRunTime
 {
     Task<Box<Unit>> RegisterCustomerAsync(Customer customer);
-    Task<Box<Unit>> UpdateCustomerAsync(
+    Task<Box<Customer>> UpdateCustomerAsync(
         Expression<Func<Customer, bool>> filter,
-        Action<Customer> updateOperations
+        Func<Customer, Customer> updateOperations
     );
     Task<Box<Customer>> GetCustomerAsync(Expression<Func<Customer, bool>> filterExpression);
 }
