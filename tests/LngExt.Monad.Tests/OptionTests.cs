@@ -1,12 +1,9 @@
 using FluentAssertions;
 using LanguageExt;
+using LngExt.Monad.Tests.Models;
 using static LanguageExt.Prelude;
 
 namespace LngExt.Monad.Tests;
-
-public record Student(string Id, string Name);
-
-public record Employee(string Id, string Name, string Address);
 
 public class OptionTests
 {
@@ -36,6 +33,7 @@ public class OptionTests
         operation.IsSome.Should().BeTrue();
         operation.IfSome(employee =>
         {
+            employee.Id.Should().Be("666");
             employee.Name.Should().Be("Cheranga");
             employee.Address.Should().Be("Melbourne");
         });
