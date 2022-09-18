@@ -47,7 +47,7 @@ public abstract record BaseRestaurantEmployee
                 c.Specialities.Any(
                     x => string.Equals(x, cousine, StringComparison.OrdinalIgnoreCase)
                 ),
-            w => false
+            _ => false
         );
 
     public bool WorksIn(DayOfWeek day) =>
@@ -93,16 +93,16 @@ public static class DateTimeExtensions
 
 public static class BaseRestaurantEmployeeTests
 {
-    private static readonly Func<BaseRestaurantEmployee, (string, string, string)> getEmployeeInfo =
-        e => e.Map(c => ("Chef", c.Id, c.Name), w => ("Waiter", w.Id, w.Name));
-
-    private static readonly Func<BaseRestaurantEmployee, string, bool> canPrepareMeal = (e, s) =>
-        e.Map(c => c.Specialities.Contains(s), _ => false);
-
-    private static readonly Func<BaseRestaurantEmployee, string, bool> canPrepareMealWithTuples = (
-        e,
-        s
-    ) => e.Map((c => c.Specialities.Contains(s), _ => false));
+    // private static readonly Func<BaseRestaurantEmployee, (string, string, string)> getEmployeeInfo =
+    //     e => e.Map(c => ("Chef", c.Id, c.Name), w => ("Waiter", w.Id, w.Name));
+    //
+    // private static readonly Func<BaseRestaurantEmployee, string, bool> canPrepareMeal = (e, s) =>
+    //     e.Map(c => c.Specialities.Contains(s), _ => false);
+    //
+    // private static readonly Func<BaseRestaurantEmployee, string, bool> canPrepareMealWithTuples = (
+    //     e,
+    //     s
+    // ) => e.Map((c => c.Specialities.Contains(s), _ => false));
 
     [Fact]
     public static void GettingEmployeeInfo()
@@ -113,7 +113,7 @@ public static class BaseRestaurantEmployeeTests
             DateTimeExtensions.Week,
             new[] { "Sri Lankan" }
         );
-        getEmployeeInfo(chef).Should().BeEquivalentTo(("Chef", "666", "Cheranga"));
+        //getEmployeeInfo(chef).Should().BeEquivalentTo(("Chef", "666", "Cheranga"));
 
         chef.GetEmployeeInfo().Should().BeEquivalentTo(("Chef", "666", "Cheranga"));
 
@@ -122,7 +122,7 @@ public static class BaseRestaurantEmployeeTests
             "Jon Snow",
             DateTimeExtensions.WeekEnds
         );
-        getEmployeeInfo(waiter).Should().BeEquivalentTo(("Waiter", "111", "Jon Snow"));
+        // getEmployeeInfo(waiter).Should().BeEquivalentTo(("Waiter", "111", "Jon Snow"));
         waiter.GetEmployeeInfo().Should().BeEquivalentTo(("Waiter", "111", "Jon Snow"));
     }
 
@@ -135,13 +135,15 @@ public static class BaseRestaurantEmployeeTests
             DateTimeExtensions.Week,
             new[] { "Sri Lankan" }
         );
-        getEmployeeInfo(chef).Should().BeEquivalentTo(("Chef", "666", "Cheranga"));
+        // getEmployeeInfo(chef).Should().BeEquivalentTo(("Chef", "666", "Cheranga"));
+        chef.GetEmployeeInfo().Should().BeEquivalentTo(("Chef", "666", "Cheranga"));
 
         BaseRestaurantEmployee waiter = new BaseRestaurantEmployee.Waiter(
             "111",
             "Jon Snow",
             new[] { DayOfWeek.Friday }
         );
+        waiter.GetEmployeeInfo().Should().BeEquivalentTo(("Waiter", "111", "Jon Snow"));
     }
 
     [Fact]
@@ -158,31 +160,9 @@ public static class BaseRestaurantEmployeeTests
             "Jon Snow",
             new[] { DayOfWeek.Friday }
         );
-        canPrepareMeal(chef, "Thai").Should().BeFalse();
-        canPrepareMeal(chef, "Sri Lankan").Should().BeTrue();
-        canPrepareMeal(waiter, "any").Should().BeFalse();
-
-        chef.CanPrepareMeal("sri lankan").Should().BeTrue();
-        waiter.CanPrepareMeal("Any").Should().BeFalse();
-    }
-
-    [Fact]
-    public static void GettingMealPreparationSpecialitiesWithTuples()
-    {
-        BaseRestaurantEmployee chef = new BaseRestaurantEmployee.Chef(
-            "666",
-            "Cheranga",
-            DateTimeExtensions.Week,
-            new[] { "Sri Lankan" }
-        );
-        BaseRestaurantEmployee waiter = new BaseRestaurantEmployee.Waiter(
-            "111",
-            "Jon Snow",
-            new[] { DayOfWeek.Friday }
-        );
-        canPrepareMealWithTuples(chef, "Thai").Should().BeFalse();
-        canPrepareMealWithTuples(chef, "Sri Lankan").Should().BeTrue();
-        canPrepareMealWithTuples(waiter, "any").Should().BeFalse();
+        chef.CanPrepareMeal("Thai").Should().BeFalse();
+        chef.CanPrepareMeal("Sri Lankan").Should().BeTrue();
+        waiter.CanPrepareMeal("any").Should().BeFalse();
     }
 
     [Fact]
@@ -228,13 +208,15 @@ public static class BaseRestaurantEmployeeTests
             "666",
             "Cheranga",
             DateTimeExtensions.WeekDays,
-            new[] {"Western"}
-        ).WorksIn(DayOfWeek.Friday).Should().BeTrue();
+            new[] { "Western" }
+        )
+            .WorksIn(DayOfWeek.Friday)
+            .Should()
+            .BeTrue();
 
-        new BaseRestaurantEmployee.Waiter(
-            "888",
-            "Jon Snow",
-            new[] {DayOfWeek.Tuesday}
-        ).WorksIn(DayOfWeek.Tuesday).Should().BeTrue();
+        new BaseRestaurantEmployee.Waiter("888", "Jon Snow", new[] { DayOfWeek.Tuesday })
+            .WorksIn(DayOfWeek.Tuesday)
+            .Should()
+            .BeTrue();
     }
 }
