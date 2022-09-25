@@ -15,15 +15,14 @@ public static class ProductLifeCycleTests
                 new BaseProductEvent.ProductAdded(correlationId, "666", "Key Board", 5, 300),
                 new BaseProductEvent.PriceChanged(correlationId, 250),
                 new BaseProductEvent.StockInHandUpdated(correlationId, 10),
-                new BaseProductEvent.StockInHandUpdated(correlationId, -10),
-                new BaseProductEvent.PriceChanged(correlationId, 200),
+                new BaseProductEvent.StockInHandUpdated(correlationId, -10)
             }
         );
 
         var updatedProduct = ProductLifeCycle.Evolve(emptyProduct, productEvents);
         updatedProduct
             .Should()
-            .BeEquivalentTo(new BaseProduct.ActiveProduct("666", "Key Board", 5, 200));
+            .BeEquivalentTo(new BaseProduct.ActiveProduct("666", "Key Board", 5, 250));
         updatedProduct
             .GetProductInfo()
             .Should()

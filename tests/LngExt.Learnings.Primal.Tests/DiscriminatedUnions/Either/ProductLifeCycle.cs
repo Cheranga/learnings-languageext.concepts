@@ -1,6 +1,6 @@
 ﻿namespace LngExt.Learnings.Primal.Tests.DiscriminatedUnions.Either;
 
-public static class ProductLifeCycle
+public sealed record ProductLifeCycle
 {
     public static BaseProduct Evolve(BaseProduct product, Queue<BaseProductEvent> events)
     {
